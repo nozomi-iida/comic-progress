@@ -14,7 +14,7 @@ RSpec.describe "Api::V1::Users", type: :request do
   describe "POST /api/v1/users" do
     it "create user" do
       user = build(:user)
-      #user.saveがfalseになる
+      #FIXME: user.saveがfalseになる
       expect { post "/api/v1/users", params: { user: user } }.to change(User, :count).by(0)
       expect(response).to have_http_status(:created)
     end
