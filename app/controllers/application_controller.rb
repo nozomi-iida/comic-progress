@@ -1,6 +1,9 @@
 class ApplicationController < ActionController::API
+  SECRET_KEY = Rails.application.secrets.secret_key_base
+
   def encode_token(payload)
-    JWT.encode(payload, "comic-progress-jwt-key")
+    logger.debug(payload)
+    JWT.encode(payload, SECRET_KEY, "HS256")
   end
 
   def auth_header
@@ -13,7 +16,7 @@ class ApplicationController < ActionController::API
       token = auth_header.split(" ")[1]
       # header: { 'Authorization': 'Bearer <token>' }
       begin
-        JWT.decode(token, "comic-progress-jwt-key", true, algorithm: "HS256")
+        JWT.decode(token, SECRET_KEY, true, algorithm: "HS256")
       rescue JWT::DecodeError
         nil
       end
