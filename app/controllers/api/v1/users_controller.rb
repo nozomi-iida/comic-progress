@@ -1,7 +1,7 @@
 module Api
   module V1
     class UsersController < ApplicationController
-      before_action :authorized, only: [:auto_login]
+      before_action :authorized, only: [:auto_login, :index]
 
       def index
         users = User.all
@@ -19,6 +19,12 @@ module Api
         end
       end
 
+      def destroy
+        user = User.find(params[:id])
+        user.destroy
+        head 204
+      end
+
       def login
         user = User.find_by(email: params[:email])
         if user && user.authenticate(params[:password])
@@ -33,18 +39,10 @@ module Api
         render json: user
       end
 
-      def destroy
-        user = User.find(params[:id])
-        user.destroy
-        head 204
-      end
-
       private
 
       def user_params
-        # FIXME: password,confirm_passwordが入ってくれない
-        # params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation)
-        params.permit(:first_name, :last_name, :email, :password, :password_confirmation)
+        params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation)
       end
     end
   end

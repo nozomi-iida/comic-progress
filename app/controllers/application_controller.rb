@@ -1,8 +1,10 @@
 class ApplicationController < ActionController::API
+  before_action :authorized
+  before_action :logged_in_user
+
   SECRET_KEY = Rails.application.secrets.secret_key_base
 
   def encode_token(payload)
-    logger.debug(payload)
     JWT.encode(payload, SECRET_KEY, "HS256")
   end
 
@@ -26,7 +28,7 @@ class ApplicationController < ActionController::API
   def logged_in_user
     if decoded_token
       user_id = decoded_token[0]["user_id"]
-      @user = User.find_by(id: user_id)
+      @current_user = User.find_by(id: user_id)
     end
   end
 

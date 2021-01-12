@@ -7,9 +7,8 @@ module Api
       end
 
       def create
-        user = User.first
         comic = Comic.new(comic_params)
-        comic.user_id = user.id
+        comic.user_id = @current_user.id
         if comic.save
           render json: comic, status: :created, adapter: :json
         else
@@ -24,14 +23,22 @@ module Api
 
       def update
         comic = Comic.find(params[:id])
-        comic.update(comic_params)
-        render json: comic, adapter: :json
+        if @current_user.id == comic.user.id
+          comic.update(comic_params)
+          render json: comic, adapter: :json
+        else
+          render json: { error: "can't update comic" }
+        end
       end
 
       def destroy
         comic = Comic.find(params[:id])
-        comic.destroy
-        head 204
+        if @current_user.id == comic.user.id
+          comic.destroy
+          head 204
+        else
+          render json: { error: "can't delete comic" }
+        end
       end
 
       private
