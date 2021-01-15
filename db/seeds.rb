@@ -12,8 +12,11 @@
     email: "test@#{n}test.com",
     password: "111111",
     password_confirmation: "111111",
+    activated: true,
+    activated_at: Time.zone.now,
   )
 end
+
 User.all.each do |user|
   user.comics.create!(
     name: "鬼滅の刃",

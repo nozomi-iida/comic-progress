@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       post "/login", to: "users#login"
       get "/auto_login", to: "users#auto_login"
       resources :comics
+      resources :account_activations, only: [:edit]
     end
   end
 end

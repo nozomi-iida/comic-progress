@@ -12,8 +12,13 @@ module Api
         user = User.new(user_params)
         expires_in = 1.month.from_now.to_i # 再ログインを必要とするまでの期間を１ヶ月とした場合
         if user.save
-          token = encode_token({ user_id: user.id, exp: expires_in })
-          render json: user, meta: { token: token }, status: :created, adapter: :json
+          user.send_activation_email
+          # token = encode_token({ user_id: user.id, exp: expires_in })
+          if user.activated?
+            render json: user, status: :created, adapter: :json
+          else
+            render json: { warning: "Check your email for the activation link" }
+          end
         else
           render json: { error: "Invalid email or password" }
         end
